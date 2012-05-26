@@ -26,9 +26,11 @@
          ,@body))))
 
 (defmacro afro (&body body)
-  `(lambda (&rest stack)
-     (progs (values-list stack)
-       ,@body)))
+  (let ((stack (gensym "stack-")))
+   `(lambda (&rest ,stack)
+      (declare (dynamic-extent ,stack))
+      (progs (values-list ,stack)
+        ,@body))))
 
 (defun drop (&rest args)
   (declare (dynamic-extent args))
@@ -100,6 +102,55 @@
     (multiple-value-call #'values
                          x
                          (values-list args))))
+
+(defun rot (x y z &rest args)
+  (declare (dynamic-extent args))
+  (multiple-value-call #'values
+                       z x y
+                       (values-list args)))
+(defafro 2drop ()
+  #'drop
+  #'drop)
+
+(defun 2nip (a b c d &rest args)
+  (declare (dynamic-extent args)
+           (ignore c d))
+  (multiple-value-call #'values
+                       a b
+                       (values-list args)))
+
+(defun 2dup (a b &rest args)
+  (declare (dynamic-extent args))
+  (multiple-value-call #'values
+                       a b
+                       a b
+                       (values-list args)))
+
+(defun 2over (a b c d &rest args)
+  (declare (dynamic-extent args))
+  (multiple-value-call #'values
+                       c d
+                       a b
+                       c d
+                       (values-list args)))
+
+(defun 2swap (a b c d &rest args)
+  (declare (dynamic-extent args))
+  (multiple-value-call #'values
+                       c d
+                       a b
+                       (values-list args)))
+
+(defun 2rot (a b c d e f &rest args)
+  (declare (dynamic-extent args))
+  (multiple-value-call #'values
+                       e f
+                       a b
+                       c d
+                       (values-list args)))
+(defafro 2tuck ()
+  #'2swap
+  #'2over)
 
 ;; : gcd ( u1 u2 )
 ;;     begin
