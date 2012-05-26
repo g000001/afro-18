@@ -1,0 +1,24 @@
+* Afro-18
+#+BEGIN_SRC lisp
+;; : gcd ( u1 u2 )
+;;     begin
+;;         tuck mod
+;;         dup 0=
+;;     until
+;;     drop ;
+
+(defafro my-gcd ()
+  (pu (afro
+        #'tuck #'modulo
+        #'dup #'0=))
+  #'until
+  #'drop )
+
+(my-gcd 1029 1071 8 8 8 8 8)
+;=>  21
+;    8
+;    8
+;    8
+;    8
+;    8
+#+END_SRC
